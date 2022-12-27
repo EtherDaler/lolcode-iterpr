@@ -15,8 +15,8 @@ Driver::Driver() :
 }
 
 
-int Driver::parse(const std::string& f) {
-    file = f;
+int Driver::parse(const std::string& file_name) {
+    file = file_name;
     // initialize location positions
     location.initialize(&file);
     scan_begin();
@@ -43,15 +43,15 @@ void Driver::scan_end()
     stream.close();
 }
 
-void Driver::print(const Value& v) {
-  std::cout << v << '\n';
+void Driver::print(const Value& value) {
+  std::cout << value << '\n';
 }
 
-void Driver::input(Value& v) {
-  std::cin >> v;
+void Driver::input(Value& value) {
+  std::cin >> value;
 }
 
-void Driver::addOp(Operator* op) {
-  ops.push_back(op);
+void Driver::addOp(Operator* oper) {
+  ops.push_back(oper);
 }
 

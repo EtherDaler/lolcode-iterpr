@@ -7,40 +7,40 @@
 #include <functional>
 
 struct Value {
-  int* i = nullptr;
-  float* f = nullptr;
-  std::string* s = nullptr;
+  int* integer = nullptr; // int value
+  float* flt = nullptr;   // float value
+  std::string* str = nullptr;  // string value
 
   Value() = default;
   Value(int i);
   Value(float f);
   Value(const std::string& s);
-  Value(const Value& v);
+  Value(const Value& other);
 
-  Value& operator=(const Value& v);
-  Value operator+(const Value& v) const;
-  Value operator-(const Value& v) const;
-  Value operator*(const Value& v) const;
-  Value operator/(const Value& v) const;
-  Value operator%(const Value& v) const;
-  Value operator&&(const Value& v) const;
-  Value operator||(const Value& v) const;
+  Value& operator=(const Value& other);
+  Value operator+(const Value& other) const;
+  Value operator-(const Value& other) const;
+  Value operator*(const Value& other) const;
+  Value operator/(const Value& other) const;
+  Value operator%(const Value& other) const;
+  Value operator&&(const Value& other) const;
+  Value operator||(const Value& other) const;
 
   Value operator!() const;
 
-  Value min(const Value& v) const;
-  Value max(const Value& v) const;
+  Value min(const Value& other) const;
+  Value max(const Value& other) const;
 
   explicit operator bool() const;
 
   ~Value();
 
-  friend std::ostream& operator<<(std::ostream& os, const Value& v);
-  friend std::istream& operator>>(std::istream& stream, Value& v);
+  friend std::ostream& operator<<(std::ostream& os, const Value& value);
+  friend std::istream& operator>>(std::istream& stream, Value& value);
 private:
   template <class T>
-  Value execute(const Value& v) const;
-  void copyFrom(const Value& v);
+  Value execute(const Value& value) const;
+  void copyFrom(const Value& value);
 };
 
 class Runtime {

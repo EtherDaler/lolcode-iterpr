@@ -4,11 +4,7 @@
 
 #include "runtime.h"
 #include "driver.h"
-
-struct Expression {
-  virtual Value eval() = 0;
-  virtual ~Expression() = default;
-};
+#include "opex.h"
 
 struct ValueExpression: Expression {
   template <class T>
@@ -175,11 +171,6 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-
-struct Operator {
-  virtual void exec() = 0;
-  virtual ~Operator() = default;
-};
 
 struct ExpressionOperator: Operator {
   ExpressionOperator(Expression* expr): expr(expr)

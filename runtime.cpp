@@ -81,141 +81,166 @@ struct Or {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-Value::Value(int i): i(new int(i)) { }
-Value::Value(float f): f(new float(f)) { }
-Value::Value(const std::string& s): s(new std::string(s)) { }
-Value::Value(const Value& v) {
-  copyFrom(v);
+Value::Value(int i): integer(new int(i)) { }
+Value::Value(float f): flt(new float(f)) { }
+Value::Value(const std::string& s): str(new std::string(s)) { }
+Value::Value(const Value& value) {
+  copyFrom(value);
 }
 
-Value& Value::operator=(const Value& v) {
-  if (this != &v)
-    copyFrom(v);
+Value& Value::operator=(const Value& other) {
+  if (this != &other) {
+    copyFrom(other);
+  }
   return *this;
 }
 
-Value Value::operator+(const Value& v) const {
-  return execute<Sum>(v);
+Value Value::operator+(const Value& other) const {
+  return execute<Sum>(other);
 }
 
-Value Value::operator-(const Value& v) const {
-  return execute<Minus>(v);
+Value Value::operator-(const Value& other) const {
+  return execute<Minus>(other);
 }
 
-Value Value::operator*(const Value& v) const {
-  return execute<Mul>(v);
+Value Value::operator*(const Value& other) const {
+  return execute<Mul>(other);
 }
 
-Value Value::operator/(const Value& v) const {
-  return execute<Div>(v);
+Value Value::operator/(const Value& other) const {
+  return execute<Div>(other);
 }
 
-Value Value::operator%(const Value& v) const {
-  return execute<Mod>(v);
+Value Value::operator%(const Value& other) const {
+  return execute<Mod>(other);
 }
 
-Value Value::min(const Value& v) const {
-  return execute<Min>(v);
+Value Value::min(const Value& other) const {
+  return execute<Min>(other);
 }
-Value Value::max(const Value& v) const {
-  return execute<Max>(v);
-}
-
-Value Value::operator&&(const Value& v) const {
-  return execute<And>(v);
+Value Value::max(const Value& other) const {
+  return execute<Max>(other);
 }
 
-Value Value::operator||(const Value& v) const {
-  return execute<Or>(v);
+Value Value::operator&&(const Value& other) const {
+  return execute<And>(other);
+}
+
+Value Value::operator||(const Value& other) const {
+  return execute<Or>(other);
 }
 
 Value Value::operator!() const {
-  if (i)
-    return !i;
-  if (s)
-    return s->empty();
+  if (integer) {
+    return !integer;
+  }
+  if (str) {
+    return str->empty();
+  }
   return Value();
 }
 
 Value::~Value() {
-  delete i;
-  delete f;
-  delete s;
+  delete integer;
+  delete flt;
+  delete str;
 }
 
-static int toInt(std::string* s) {
-  if (s->empty())
+static int toInt(std::string* data) {
+  if (data->empty()) {
     return 0;
-  return std::stoi(*s);
+  }
+  return std::stoi(*data);
 }
 
-static float toFloat(std::string* s) {
-  if (s->empty())
+static float toFloat(std::string* data) {
+  if (data->empty()) {
     return 0;
-  return std::stof(*s);
+  }
+  return std::stof(*data);
 }
 
 template <class T>
-Value Value::execute(const Value& v) const {
-  if (i) {
-    if (v.i)
-      return Value(T::calc(*i, *v.i));
-    else if (v.f)
-      return Value(T::calc((float) *i, *v.f));
-    else
-      return Value(T::calc(*i, toInt(v.s)));
-  } else if (f) {
-    if (v.f)
-      return Value(T::calc(*f, *v.f));
-    else if (v.i)
-      return Value(T::calc(*f, (float) *v.i));
-    else
-      return Value(T::calc(*f, toFloat(v.s)));
-  } else if (s && v.s)
-    return Value(T::calc(toInt(s), toInt(v.s)));
-  else
-    return v + *this;
+Value Value::execute(const Value& value) const {
+  if (integer) {
+    if (value.integer) {
+      return Value(T::calc(*integer, *value.integer));
+    }
+    else if (value.flt) {
+      return Value(T::calc((float) *integer, *value.flt));
+    }
+    else {
+      return Value(T::calc(*integer, toInt(value.str)));
+    }
+  } else if (flt) {
+    if (value.flt) {
+      return Value(T::calc(*flt, *value.flt));
+    }
+    else if (value.integer) {
+      return Value(T::calc(*flt, (float) *value.integer));
+    }
+    else {
+      return Value(T::calc(*flt, toFloat(value.str)));
+    }
+  } else if (str && value.str) {
+    return Value(T::calc(toInt(str), toInt(value.str)));
+  }
+  else {
+    return value + *this;
+  }
 }
 
-void Value::copyFrom(const Value& v) {
-  if (v.i)
-    i = new int(*v.i);
-  if (v.f)
-    f = new float(*v.f);
-  if (v.s)
-    s = new std::string(*v.s);
+void Value::copyFrom(const Value& value) {
+  if (value.integer) {
+    integer = new int(*value.integer);
+  }
+  if (value.flt) {
+    flt = new float(*value.flt);
+  }
+  if (value.str) {
+    str = new std::string(*value.str);
+  }
 }
 
-std::ostream& operator<<(std::ostream& os, const Value& v) {
-  if (v.i)
-    return os << *v.i;
-  if (v.f)
-    return os << *v.f;
-  if (v.s)
-    return os << *v.s;
+std::ostream& operator<<(std::ostream& os, const Value& value) {
+  if (value.integer) {
+    return os << *value.integer;
+  }
+  if (value.flt) {
+    return os << *value.flt;
+  }
+  if (value.str) {
+    return os << *value.str;
+  }
   return os;
 }
 
-std::istream& operator>>(std::istream& stream, Value& v) {
-  if (v.i)
-    return stream >> *v.i;
-  if (v.f)
-    return stream >> *v.f;
-  if (v.s)
-    return stream >> *v.s;
+std::istream& operator>>(std::istream& stream, Value& value) {
+  if (value.integer) {
+    return stream >> *value.integer;
+  }
+  if (value.flt) {
+    return stream >> *value.flt;
+  }
+  if (value.str) {
+    return stream >> *value.str;
+  }
   return stream;
 }
 
 Value::operator bool() const {
-  if (i)
-    return *i;
-  if (s)
-    return !s->empty();
+  if (integer) {
+    return *integer;
+  }  
+  if (str) {
+    return !str->empty();
+  }
   return false;
 }
 
 Runtime::~Runtime() {
   std::cout << "\nStack:\n";
-  for (auto& v : vars)
+  for (auto& v : vars) {
     std::cout << v.first << " = " << v.second << '\n';
+  }
 }

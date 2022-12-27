@@ -16,7 +16,7 @@ class Driver {
     Driver();
     std::map<std::string, int> variables;
     int result;
-    int parse(const std::string& f);
+    int parse(const std::string& file_name);
     std::string file;
 
 
@@ -33,9 +33,9 @@ class Driver {
     yy::parser parser;
     bool location_debug;
 
-    void print(const Value& v);
-    void addOp(Operator* op);
-    void input(Value& v);
+    void print(const Value& value);
+    void addOp(Operator* oper);
+    void input(Value& value);
     std::vector<Operator*> ops;
  private:
     std::ifstream stream;
