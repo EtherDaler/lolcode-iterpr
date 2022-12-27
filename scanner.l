@@ -12,11 +12,11 @@
 
 %{
     yy::parser::symbol_type make_INT(const std::string& s,
-                                 const yy::parser::location_type& loc);
+                                    const yy::parser::location_type& loc);
     yy::parser::symbol_type make_FLOAT(const std::string& s,
-                                     const yy::parser::location_type& loc);
-                                     yy::parser::symbol_type make_STRING(const std::string& s,
-                                                                          const yy::parser::location_type& loc);
+                                        const yy::parser::location_type& loc);
+    yy::parser::symbol_type make_STRING(const std::string& s,
+                                        const yy::parser::location_type& loc);
     void Scanner::UpdateLocation() {
         driver.location.columns(yyleng);
     }
@@ -112,10 +112,10 @@ yy::parser::symbol_type make_STRING(const std::string& s,
     while ((i = n.find(":>")) != std::string::npos )
         n.replace(i, 2, "\t");
     while ((i = n.find(":o")) != std::string::npos )
-            n.replace(i, 2, "\a");
+        n.replace(i, 2, "\a");
     while ((i = n.find(":\"")) != std::string::npos )
-                n.replace(i, 2, "\"");
+        n.replace(i, 2, "\"");
     while ((i = n.find("::")) != std::string::npos )
-                n.replace(i, 2, ":");
+        n.replace(i, 2, ":");
     return yy::parser::make_STRING(n, loc);
 }
